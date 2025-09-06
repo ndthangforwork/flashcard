@@ -67,7 +67,7 @@ export default function FlashcardDetailPage() {
               </div>
 
               {/* Back */}
-              <div className="absolute w-full h-full flex items-center justify-center text-2xl font-bold rounded-2xl shadow-lg bg-blue-200 [transform:rotateY(180deg)] backface-hidden">
+              <div className="absolute w-full h-full flex items-center justify-center text-4xl font-bold rounded-2xl shadow-lg bg-blue-200 [transform:rotateY(180deg)] backface-hidden">
                 {card.back}
               </div>
             </div>
