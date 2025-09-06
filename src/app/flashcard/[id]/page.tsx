@@ -53,7 +53,7 @@ export default function FlashcardDetailPage() {
         <div className="flex flex-col items-center justify-center">
           {/* Thẻ flashcard */}
           <div
-            className="w-96 h-56 [perspective:1000px]"
+            className="w-96 h-56 [perspective:1000px] sm:w-[600px] sm:h-[450px]"
             onClick={handleFlip}
           >
             <div
@@ -62,7 +62,7 @@ export default function FlashcardDetailPage() {
               }`}
             >
               {/* Front */}
-              <div className="absolute w-full h-full flex items-center justify-center text-2xl font-bold rounded-2xl shadow-lg bg-white backface-hidden">
+              <div className="absolute w-full h-full flex items-center justify-center text-4xl font-bold rounded-2xl shadow-lg bg-white backface-hidden">
                 {card.front}
               </div>
 
