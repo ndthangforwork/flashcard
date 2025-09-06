@@ -37,7 +37,7 @@ export default function FlashcardDetailPage() {
   const handleFlip = () => setFlipped(!flipped);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-[#e2e2e2] to-[#c9d6ff] p-6">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-[#e2e2e2] to-[#c9d6ff] p-6 mb-10">
       <h1 className="text-3xl font-bold mb-8">{flashcard.name}</h1>
 
       {/* Nút quay về */}
@@ -50,7 +50,7 @@ export default function FlashcardDetailPage() {
 
       {flashcard.cards.length > 0
       ? (
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center pb-[150px]">
           {/* Thẻ flashcard */}
           <div
             className="w-96 h-56 [perspective:1000px] sm:w-[600px] sm:h-[450px]"
@@ -62,12 +62,12 @@ export default function FlashcardDetailPage() {
               }`}
             >
               {/* Front */}
-              <div className="absolute w-full h-full flex items-center justify-center text-8xl font-bold rounded-2xl shadow-lg bg-white backface-hidden">
+              <div className="absolute w-full h-full flex items-center justify-center text-8xl sm:text-3xl font-bold rounded-2xl shadow-lg bg-white backface-hidden">
                 {card.front}
               </div>
 
               {/* Back */}
-              <div className="absolute w-full h-full flex items-center justify-center text-8xl font-bold rounded-2xl shadow-lg bg-blue-200 [transform:rotateY(180deg)] backface-hidden">
+              <div className="absolute w-full h-full flex items-center justify-center text-8xl sm:text-3xl font-bold rounded-2xl shadow-lg bg-blue-200 [transform:rotateY(180deg)] backface-hidden">
                 {card.back}
               </div>
             </div>
