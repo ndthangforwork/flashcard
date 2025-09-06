@@ -142,9 +142,7 @@ export default function FlashcardDetailPage() {
               <div className="flex gap-4 mt-4">
                 <button
                   onClick={() => {
-                    if (
-                      answer.trim().toLowerCase() === card.back.trim().toLowerCase()
-                    ) {
+                    if (card.back.trim().toLowerCase().includes(answer.trim().toLowerCase())) {
                       setIsCorrect(true);
                     } else {
                       setIsCorrect(false);
@@ -171,7 +169,7 @@ export default function FlashcardDetailPage() {
               </div>
 
               {isCorrect === true && (
-                <p className="mt-2 text-green-600">✅ Chính xác!</p>
+                <p className="mt-2 text-green-600">✅ Chính xác! Đáp án là: <b>{card.back}</b></p>
               )}
               {isCorrect === false && (
                 <p className="mt-2 text-red-600">
