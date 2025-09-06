@@ -62,12 +62,12 @@ export default function FlashcardDetailPage() {
               }`}
             >
               {/* Front */}
-              <div className="absolute w-full h-full flex items-center justify-center text-8xl sm:text-3xl font-bold rounded-2xl shadow-lg bg-white backface-hidden">
+              <div className="absolute w-full h-full flex items-center justify-center text-3xl sm:text-8xl font-bold rounded-2xl shadow-lg bg-white backface-hidden">
                 {card.front}
               </div>
 
               {/* Back */}
-              <div className="absolute w-full h-full flex items-center justify-center text-8xl sm:text-3xl font-bold rounded-2xl shadow-lg bg-blue-200 [transform:rotateY(180deg)] backface-hidden">
+              <div className="absolute w-full h-full flex items-center justify-center text-3xl sm:text-8xl font-bold rounded-2xl shadow-lg bg-blue-200 [transform:rotateY(180deg)] backface-hidden">
                 {card.back}
               </div>
             </div>
