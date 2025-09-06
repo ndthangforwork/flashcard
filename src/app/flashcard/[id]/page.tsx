@@ -127,7 +127,7 @@ export default function FlashcardDetailPage() {
           {/* Nếu Typing Mode */}
           {mode === "typing" && (
             <div className="flex flex-col items-center">
-              <div className="w-96 h-40 sm:w-[600px] sm:h-[450px] flex items-center justify-center text-3xl sm:text-5xl font-bold rounded-2xl shadow-lg bg-white">
+              <div className="w-96 h-40 sm:w-[600px] sm:h-[450px] flex items-center justify-center text-3xl sm:text-8xl font-bold rounded-2xl shadow-lg bg-white">
                 {card.front}
               </div>
 
