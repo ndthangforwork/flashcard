@@ -63,7 +63,17 @@ export default function FlashcardDetailPage() {
   }, [mode, currentIndex, flashcard]);
 
   if (!flashcard) return <p className="text-center mt-10">Đang tải...</p>;
-  if (flashcard.cards.length === 0) return <Empty description="Không có dữ liệu" />;
+  if (flashcard.cards.length === 0) return (
+    <div className="mt-72 flex flex-col items-center justify-center">
+      <button
+        onClick={() => router.push("/")}
+        className="mb-6 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+      >
+        ← Quay về Home
+      </button>
+      <Empty description="Không có dữ liệu" />;
+    </div>
+  )
 
   const card = flashcard.cards[currentIndex];
 

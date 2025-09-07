@@ -3,25 +3,47 @@
 import { useEffect, useState } from "react";
 import { FlashcardList } from "@/types";
 import { useRouter } from "next/navigation";
-import { Modal } from "antd";
+import {
+  Button,
+  Card,
+  Modal,
+  Input,
+  Row,
+  Col,
+  Space,
+  Empty,
+  Spin,
+  message,
+} from "antd";
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  BookOutlined,
+  FileTextOutlined,
+  ThunderboltOutlined,
+} from "@ant-design/icons";
 
 export default function Home() {
   const [lists, setLists] = useState<FlashcardList[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [newName, setNewName] = useState("");
+  const [adding, setAdding] = useState(false);
   const router = useRouter();
-  const { confirm } = Modal;
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch("https://be-flashcard-rikj.onrender.com/flashcards");
+        const res = await fetch(
+          "https://be-flashcard-rikj.onrender.com/flashcards"
+        );
         if (!res.ok) throw new Error("Failed to fetch");
         const data = await res.json();
         setLists(data);
       } catch (err) {
         console.error(err);
+        message.error("Không thể tải dữ liệu");
       } finally {
         setLoading(false);
       }
@@ -30,31 +52,49 @@ export default function Home() {
     fetchData();
   }, []);
 
-  // Xóa flashcard
   const handleDelete = async (id: string) => {
-    if (!window.confirm("Bạn có chắc chắn muốn xoá?")) return;
-
-    try {
-      await fetch(`https://be-flashcard-rikj.onrender.com/flashcards/${id}`, {
-        method: "DELETE",
-      });
-      setLists((prev) => prev.filter((item) => item._id !== id));
-    } catch (err) {
-      console.error("Failed to delete", err);
-    }
+    Modal.confirm({
+      title: "Xác nhận xoá",
+      content: "Bạn có chắc chắn muốn xoá bộ sưu tập này?",
+      okText: "Xoá",
+      okType: "danger",
+      cancelText: "Hủy",
+      onOk: async () => {
+        try {
+          await fetch(
+            `https://be-flashcard-rikj.onrender.com/flashcards/${id}`,
+            {
+              method: "DELETE",
+            }
+          );
+          setLists((prev) => prev.filter((item) => item._id !== id));
+          message.success("Đã xoá");
+        } catch (err) {
+          console.error("Failed to delete", err);
+          message.error("Xoá thất bại");
+        }
+      },
+    });
   };
 
-  // Thêm flashcard mới
   const handleAdd = async () => {
+    if (!newName.trim()) {
+      message.warning("Tên bộ sưu tập không được để trống");
+      return;
+    }
+    setAdding(true);
     try {
-      const res = await fetch("https://be-flashcard-rikj.onrender.com/flashcards", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: newName,
-          cards: [], // mặc định rỗng
-        }),
-      });
+      const res = await fetch(
+        "https://be-flashcard-rikj.onrender.com/flashcards",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: newName,
+            cards: [],
+          }),
+        }
+      );
 
       if (!res.ok) throw new Error("Failed to add");
 
@@ -62,8 +102,12 @@ export default function Home() {
       setLists((prev) => [...prev, newFlashcard]);
       setNewName("");
       setShowForm(false);
+      message.success("Thêm thành công");
     } catch (err) {
       console.error("Failed to add flashcard", err);
+      message.error("Thêm thất bại");
+    } finally {
+      setAdding(false);
     }
   };
 
@@ -72,84 +116,105 @@ export default function Home() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-[#e2e2e2] to-[#c9d6ff]">
-      <div className="relative w-[850px] h-[550px] bg-white rounded-[30px] shadow-lg overflow-hidden flex flex-col p-2.5">
-        {/* Tiêu đề */}
-        <div className="flex items-center justify-center">
-          <h1 className="text-2xl font-bold mb-6">Bộ sưu tập</h1>
-        </div>
-
-        {/* Nút thêm mới */}
-        <button
-          onClick={() => setShowForm(true)}
-          className="mb-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-        >
-          + Thêm mới
-        </button>
-
-        {/* Danh sách flashcard */}
-        <div className="flex flex-col gap-3 overflow-y-auto">
-          {lists.map((item) => (
-            <div
-              key={item._id}
-              onClick={() => goToDetail(item._id)}
-              className="flex justify-between items-center p-4 border rounded-lg shadow-sm hover:bg-gray-50 cursor-pointer"
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-[#f0f4ff] to-[#e2e8f0]">
+      <div className="relative w-[900px] min-h-[550px] bg-white rounded-[30px] shadow-xl overflow-hidden flex flex-col p-6">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <BookOutlined style={{ fontSize: "26px", color: "#fa8c16" }} />
+            Bộ sưu tập
+          </h1>
+          <div className="flex gap-4">
+            <Button
+              type="primary"
+              size="large"
+              icon={<ThunderboltOutlined />}
+              onClick={() => router.push('/quiz')}
+              className="rounded-lg px-4"
             >
-              <span>{item.name}</span>
-              <div className="flex gap-2">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push(`/flashcard/${item._id}/edit`);
-                  }}
-                  className="px-3 py-1 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 cursor-pointer"
-                >
-                  Sửa
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDelete(item._id);
-                  }}
-                  className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 cursor-pointer"
-                >
-                  Xóa
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Modal thêm mới */}
-      {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-xl w-96 shadow-lg">
-            <h2 className="text-lg font-bold mb-4">Thêm Flashcard mới</h2>
-            <input
-              type="text"
-              placeholder="Tên flashcard..."
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              className="w-full border rounded-lg px-3 py-2 mb-4"
-            />
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={() => setShowForm(false)}
-                className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
-              >
-                Hủy
-              </button>
-              <button
-                onClick={handleAdd}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-              >
-                Lưu
-              </button>
-            </div>
+              Crazy Mode
+            </Button>
+            <Button
+              type="primary"
+              size="large"
+              icon={<PlusOutlined />}
+              onClick={() => setShowForm(true)}
+              className="rounded-lg px-4"
+            >
+              Thêm mới
+            </Button>
           </div>
         </div>
-      )}
+
+        {/* Content */}
+        {loading ? (
+          <div className="flex justify-center items-center h-[300px]">
+            <Spin size="large" />
+          </div>
+        ) : lists.length === 0 ? (
+          <Empty description="Chưa có bộ sưu tập nào" />
+        ) : (
+          <Row gutter={[16, 16]} className="mt-2">
+            {lists.map((item) => (
+              <Col xs={24} sm={12} md={8} key={item._id}>
+                <Card
+                  hoverable
+                  className="rounded-xl shadow-md hover:shadow-xl transition-all duration-300"
+                  onClick={() => goToDetail(item._id)}
+                  title={
+                    <Space>
+                      <BookOutlined style={{ fontSize: "20px", color: "#1677ff" }} />
+                      <span className="font-semibold">{item.name}</span>
+                    </Space>
+                  }
+                  actions={[
+                    <EditOutlined
+                      key="edit"
+                      style={{ fontSize: "20px", color: "#1677ff" }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/flashcard/${item._id}/edit`);
+                      }}
+                    />,
+                    <DeleteOutlined
+                      key="delete"
+                      style={{ fontSize: "20px", color: "red" }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(item._id);
+                      }}
+                    />,
+                  ]}
+                >
+                  {/* Badge bắt mắt */}
+                  <div className="flex justify-end">
+                    <span className="px-3 py-1 bg-gradient-to-r from-blue-400 to-indigo-500 text-white text-[16px] font-semibold rounded-full flex items-center gap-2 shadow-md">
+                      <FileTextOutlined /> {item.cards?.length || 0} thẻ
+                    </span>
+                  </div>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        )}
+
+        {/* Modal thêm mới */}
+        <Modal
+          title="Thêm bộ sưu tập mới"
+          open={showForm}
+          onCancel={() => setShowForm(false)}
+          onOk={handleAdd}
+          confirmLoading={adding}
+          okText="Lưu"
+          cancelText="Hủy"
+        >
+          <Input
+            placeholder="Tên bộ sưu tập..."
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+          />
+        </Modal>
+      </div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-export interface Card {
+export interface CardType {
   front: string;
   back: string;
 }
@@ -6,5 +6,5 @@ export interface Card {
 export interface FlashcardList {
   _id: string;
   name: string;
-  cards: Card[];
+  cards: CardType[];
 }
