@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { FlashcardList } from "@/types";
 import { Empty } from "antd";
+import { useSpeech } from "@/hooks/useSpeech";
 
 export default function FlashcardDetailPage() {
   const { id } = useParams();
@@ -18,6 +19,8 @@ export default function FlashcardDetailPage() {
    // thêm state shuffle deck
   const [quizOrder, setQuizOrder] = useState<number[]>([]);
   const [quizPos, setQuizPos] = useState(0);
+
+  const { speak, ready } = useSpeech("ja-JP");
 
   const router = useRouter();
 
@@ -74,17 +77,6 @@ export default function FlashcardDetailPage() {
       setCurrentIndex((prev) => (prev + 1) % flashcard.cards.length);
     }
   };
-
-  const speak = (text: string, lang: string = "en-US") => {
-    if ("speechSynthesis" in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = lang; 
-      window.speechSynthesis.speak(utterance);
-    } else {
-      alert("Trình duyệt của bạn không hỗ trợ Text-to-Speech");
-    }
-  };
-
 
   const handleRandom = () => {
     const randomIndex = Math.floor(Math.random() * flashcard.cards.length);
@@ -236,10 +228,11 @@ export default function FlashcardDetailPage() {
             </button>
 
             <button
+              disabled={!ready}
               onClick={() => speak(card.front, "ja-JP")}
-              className="mt-3 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600"
+              className="mt-4 px-4 py-2 bg-green-500 text-white rounded-lg"
             >
-              🔊 Đọc mặt trước
+              🔊 Nghe
             </button>
 
             {/* Progress + Input chỉnh số thứ tự */}
