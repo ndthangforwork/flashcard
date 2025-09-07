@@ -219,21 +219,23 @@ export default function FlashcardDetailPage() {
               </div>
             </div>
 
-            {/* Nút next */}
-            <button
-              onClick={handleNext}
-              className="mt-6 px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
-            >
-              Thẻ tiếp theo
-            </button>
+            <div className="flex gap-4 mb-6 items-stretch">
+                {/* Nút next */}
+                <button
+                  onClick={handleNext}
+                  className="mt-6 px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
+                >
+                  Thẻ tiếp theo
+                </button>
 
-            <button
-              disabled={!ready}
-              onClick={() => speak(card.front, "ja-JP")}
-              className="mt-4 px-4 py-2 bg-green-500 text-white rounded-lg"
-            >
-              🔊 Nghe
-            </button>
+                <button
+                  disabled={!ready}
+                  onClick={() => speak(!flipped ? card.front : card.back, "ja-JP")}
+                  className="mt-6 px-4 py-2 bg-[#6F42C1] text-white rounded-lg cursor-pointer hover:bg-[#855FDB]"
+                >
+                  🔊 Nghe
+                </button>
+            </div>
 
             {/* Progress + Input chỉnh số thứ tự */}
             <div className="mt-3 flex flex-col items-center gap-2">
