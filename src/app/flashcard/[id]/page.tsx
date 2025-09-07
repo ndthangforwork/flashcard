@@ -75,6 +75,17 @@ export default function FlashcardDetailPage() {
     }
   };
 
+  const speak = (text: string, lang: string = "en-US") => {
+    if ("speechSynthesis" in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang; 
+      window.speechSynthesis.speak(utterance);
+    } else {
+      alert("Trình duyệt của bạn không hỗ trợ Text-to-Speech");
+    }
+  };
+
+
   const handleRandom = () => {
     const randomIndex = Math.floor(Math.random() * flashcard.cards.length);
     setCurrentIndex(randomIndex);
@@ -222,6 +233,13 @@ export default function FlashcardDetailPage() {
               className="mt-6 px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
             >
               Thẻ tiếp theo
+            </button>
+
+            <button
+              onClick={() => speak(card.front, "ja-JP")}
+              className="mt-3 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600"
+            >
+              🔊 Đọc mặt trước
             </button>
 
             {/* Progress + Input chỉnh số thứ tự */}
