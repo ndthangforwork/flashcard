@@ -14,6 +14,7 @@ import {
   Empty,
   Spin,
   message,
+  Select,
 } from "antd";
 import {
   PlusOutlined,
@@ -22,6 +23,8 @@ import {
   BookOutlined,
   FileTextOutlined,
   ThunderboltOutlined,
+  TagOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 
 export default function Home() {
@@ -30,6 +33,10 @@ export default function Home() {
   const [showForm, setShowForm] = useState(false);
   const [newName, setNewName] = useState("");
   const [adding, setAdding] = useState(false);
+
+  const [search, setSearch] = useState(""); // state cho tìm kiếm
+  const [filterTag, setFilterTag] = useState<string | null>(null); // state cho bộ lọc tag
+
   const router = useRouter();
 
   useEffect(() => {
@@ -92,6 +99,7 @@ export default function Home() {
           body: JSON.stringify({
             name: newName,
             cards: [],
+            tags: [], // thêm tags mặc định rỗng
           }),
         }
       );
@@ -115,9 +123,18 @@ export default function Home() {
     router.push(`/flashcard/${id}`);
   };
 
+  // Lọc danh sách theo search + tag
+  const filteredLists = lists.filter((item) => {
+    const matchesSearch = item.name
+      .toLowerCase()
+      .includes(search.toLowerCase());
+    const matchesTag = filterTag ? item.tags?.includes(filterTag) : true;
+    return matchesSearch && matchesTag;
+  });
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-[#f0f4ff] to-[#e2e8f0]">
-      <div className="relative w-[900px] min-h-[550px] bg-white rounded-[30px] shadow-xl overflow-hidden flex flex-col p-6">
+      <div className="relative w-[950px] min-h-[550px] bg-white rounded-[30px] shadow-xl overflow-hidden flex flex-col p-6">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold flex items-center gap-2">
@@ -129,7 +146,7 @@ export default function Home() {
               type="primary"
               size="large"
               icon={<ThunderboltOutlined />}
-              onClick={() => router.push('/quiz')}
+              onClick={() => router.push("/quiz")}
               className="rounded-lg px-4"
             >
               Crazy Mode
@@ -146,16 +163,39 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Thanh tìm kiếm + lọc */}
+        <div className="flex gap-4 mb-6">
+          <Input
+            prefix={<SearchOutlined />}
+            placeholder="Tìm kiếm bộ sưu tập..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-1/2"
+          />
+          <Select
+            placeholder="Lọc theo tag"
+            allowClear
+            value={filterTag}
+            onChange={(val) => setFilterTag(val)}
+            options={[
+              { value: "Hiragana", label: "Hiragana" },
+              { value: "Chữ Hán", label: "Chữ Hán" },
+              { value: "Khác", label: "Khác" },
+            ]}
+            className="w-1/3"
+          />
+        </div>
+
         {/* Content */}
         {loading ? (
           <div className="flex justify-center items-center h-[300px]">
             <Spin size="large" />
           </div>
-        ) : lists.length === 0 ? (
-          <Empty description="Chưa có bộ sưu tập nào" />
+        ) : filteredLists.length === 0 ? (
+          <Empty description="Không có kết quả phù hợp" />
         ) : (
           <Row gutter={[16, 16]} className="mt-2">
-            {lists.map((item) => (
+            {filteredLists.map((item) => (
               <Col xs={24} sm={12} md={8} key={item._id}>
                 <Card
                   hoverable
@@ -163,7 +203,9 @@ export default function Home() {
                   onClick={() => goToDetail(item._id)}
                   title={
                     <Space>
-                      <BookOutlined style={{ fontSize: "20px", color: "#1677ff" }} />
+                      <BookOutlined
+                        style={{ fontSize: "20px", color: "#1677ff" }}
+                      />
                       <span className="font-semibold">{item.name}</span>
                     </Space>
                   }
@@ -186,9 +228,15 @@ export default function Home() {
                     />,
                   ]}
                 >
-                  {/* Badge bắt mắt */}
-                  <div className="flex justify-end">
-                    <span className="px-3 py-1 bg-gradient-to-r from-blue-400 to-indigo-500 text-white text-[16px] font-semibold rounded-full flex items-center gap-2 shadow-md">
+                  <div className="flex justify-between items-center">
+                    {/* Tag hiển thị */}
+                    {item.tags && item.tags.length > 0 && (
+                      <span className="px-3 py-1 bg-gradient-to-r from-pink-400 to-rose-500 text-white text-[13px] font-semibold rounded-full flex items-center gap-1 shadow">
+                        <TagOutlined /> {item.tags[0]}
+                      </span>
+                    )}
+                    {/* Số thẻ */}
+                    <span className="px-3 py-1 bg-gradient-to-r from-blue-400 to-indigo-500 text-white text-[13px] font-semibold rounded-full flex items-center gap-2 shadow">
                       <FileTextOutlined /> {item.cards?.length || 0} thẻ
                     </span>
                   </div>

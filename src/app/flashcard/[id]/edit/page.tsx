@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Papa from "papaparse";
-import { Table, Input, Button, Space, Upload, message } from "antd";
+import { Table, Input, Button, Space, Upload, message, Select } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { UploadOutlined } from "@ant-design/icons";
 
@@ -15,6 +15,7 @@ interface Card {
 interface FlashcardDetail {
   _id: string;
   name: string;
+  tags: string[];
   cards: Card[];
 }
 
@@ -69,6 +70,7 @@ export default function EditFlashcardPage() {
 
   const handleSave = async () => {
     if (!flashcard) return;
+    console.log(flashcard)
     try {
       await fetch(
         `https://be-flashcard-rikj.onrender.com/flashcards/${flashcard._id}`,
@@ -178,9 +180,43 @@ export default function EditFlashcardPage() {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-[#e2e2e2] to-[#c9d6ff]">
-      <div className="relative w-[1200px] h-[750px] bg-white rounded-[30px] shadow-lg overflow-hidden flex flex-col p-2.5">
+      <div className="relative w-[1200px] h-[750px] bg-white rounded-[30px] shadow-lg overflow-hidden flex flex-col p-2.5 overflow-y-auto">
          <div className="p-6 flex flex-col justify-center items-center">
-          <h1 className="text-xl font-bold mb-4">Chỉnh sửa: {flashcard.name}</h1>
+          <h1 className="text-xl font-bold mb-4">Chỉnh sửa Flashcard</h1>
+
+          {/* Chỉnh sửa tên bộ sưu tập */}
+          <div className="w-full max-w-lg mb-4">
+            <label className="font-medium">Tên bộ sưu tập:</label>
+            <Input
+              className="mt-1"
+              value={flashcard.name}
+              onChange={(e) =>
+                setFlashcard((prev) =>
+                  prev ? { ...prev, name: e.target.value } : prev
+                )
+              }
+            />
+          </div>
+
+          {/* Chỉnh sửa tags */}
+        <div className="w-full max-w-lg mb-4">
+          <label className="font-medium">Tags:</label>
+          <Select
+            className="mt-1 w-full"
+            placeholder="Chọn tag"
+            value={flashcard.tags?.[0] || null}
+            onChange={(newTag) =>
+              setFlashcard((prev) =>
+                prev ? { ...prev, tags: [newTag] } : prev
+              )
+            }
+            options={[
+              { value: "Hiragana", label: "Hiragana" },
+              { value: "Chữ Hán", label: "Chữ Hán" },
+              { value: "Khác", label: "Khác" },
+            ]}
+          />
+        </div> 
 
           {/* Upload CSV */}
           <Upload
