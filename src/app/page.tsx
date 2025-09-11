@@ -146,6 +146,15 @@ export default function Home() {
               type="primary"
               size="large"
               icon={<ThunderboltOutlined />}
+              onClick={() => router.push("/foods")}
+              className="rounded-lg px-4"
+            >
+              Foods
+            </Button>
+            <Button
+              type="primary"
+              size="large"
+              icon={<ThunderboltOutlined />}
               onClick={() => router.push("/quiz")}
               className="rounded-lg px-4"
             >
