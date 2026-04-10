@@ -61,13 +61,14 @@ export default function QuizPage() {
                 hoverable
                 variant="borderless"
                 className="rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 border-2 border-blue-400"
+                onClick={() => router.push("/kanji")}
                 title={
                   <span className="font-semibold text-lg flex items-center gap-2">
-                    <TrophyOutlined className="text-blue-500" /> Streak & thành tích ( CHỨC NĂNG NÀY CHƯA HỖ TRỢ HEHEHEHE)
+                    <TrophyOutlined className="text-blue-500" /> Siêu cấp vũ trụ kinh khủng (Drawing KANJI)
                   </span>
                 }
               >
-                Duy trì chuỗi ngày học và nhận thưởng 🎉
+                Vẽ vời lung tung beng
               </Card>
             </Col>
           </Row>
