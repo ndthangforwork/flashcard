@@ -196,7 +196,7 @@ export default function FlashcardDetailPage() {
       const data = await response.json();
       setResult(data);
       // Compare result
-      const correct = compareResult(card.front, data.top);
+      const correct = compareResult(card.back, data.top);
       setIsCorrect(correct);
       setShowResultModal(true);
       // setIsPopupOpen(true);
@@ -531,7 +531,7 @@ export default function FlashcardDetailPage() {
 
           <div className="rounded-2xl bg-white p-4 shadow-sm border border-slate-200">
             <p className="text-sm text-slate-500">Chữ gốc</p>
-            <p className="mt-2 text-xl font-semibold text-slate-900">{card.front}</p>
+            <p className="mt-2 text-xl font-semibold text-slate-900">{card.back}</p>
           </div>
 
           {isCorrect === false && (
