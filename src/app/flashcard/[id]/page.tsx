@@ -38,7 +38,7 @@ export default function FlashcardDetailPage() {
     async function fetchData() {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BE_SERVER}/flashcards/${id}`
+          `https://be-flashcard-rikj.onrender.com/flashcards/${id}`
         );
         const data = await res.json();
         setFlashcard(data);
